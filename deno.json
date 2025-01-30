@@ -1,0 +1,28 @@
+{
+  "imports": {
+    "@goatdb/goatdb": "jsr:@goatdb/goatdb@^0.0.64",
+    "@std/path": "jsr:@std/path@^1.0.8",
+    "react": "npm:react@19.0.0",
+    "react-dom": "npm:react-dom@19.0.0",
+    "yargs": "npm:yargs@17.7.2",
+    "@/components/ui/": "./components/ui/"
+
+  },
+  "compilerOptions": {
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "dom.asynciterable",
+      "deno.ns"
+    ],
+    "jsx": "precompile"
+  },
+  "jsxImportSource": "react",
+  "tasks": {
+    "debug": "deno run -A debug-server.ts",
+    "build": "deno run -A build.ts",
+    "clean": "rm -r server-data"
+
+  },
+  "version": "0.0.1"
+}
