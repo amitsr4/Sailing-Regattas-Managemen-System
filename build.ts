@@ -1,13 +1,13 @@
-import { compile } from "@goatdb/goatdb/server";
+import { compile } from '@goatdb/goatdb/server';
 
 async function main(): Promise<void> {
   await compile({
-    buildDir: "./build",
-    serverEntry: "./server.ts",
-    jsPath: "./scaffold/index.tsx",
-    htmlPath: "./scaffold/index.html",
-    cssPath: "./scaffold/index.css",
-    assetsPath: "./assets",
+    buildDir: './build',
+    serverEntry: './server.ts',
+    jsPath: './scaffold/index.tsx',
+    htmlPath: './scaffold/index.html',
+    cssPath: './scaffold/index.css',
+    assetsPath: './assets',
   });
   Deno.exit();
 }

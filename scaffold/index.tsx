@@ -1,25 +1,13 @@
-// // deno-lint-ignore no-unused-vars
-// import React from 'react';
-// import { createRoot } from 'react-dom/client';
-// import { App } from '../src/app.tsx';
-// import { registerSchemas } from '../schema.ts';
-
-// registerSchemas();
-
-// const domNode = document.getElementById('root')!;
-
-// const root = createRoot(domNode);
-// root.render(<App />);
+// deno-lint-ignore no-unused-vars
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from '../src/app.tsx';
+import { registerSchemas } from '../schema.ts';
 
-const container = document.getElementById('root');
-if (!container) throw new Error('Failed to find the root element');
-const root = createRoot(container);
+console.log('Starting application...');
 
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+registerSchemas();
+
+const domNode = document.getElementById('root')!;
+const root = createRoot(domNode);
+root.render(<App />);

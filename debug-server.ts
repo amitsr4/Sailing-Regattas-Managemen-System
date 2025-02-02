@@ -2,7 +2,11 @@ import { startDebugServer } from '@goatdb/goatdb/server';
 import { registerSchemas } from './schema.ts';
 
 async function main(): Promise<void> {
+  console.log('Starting debug server...');
+
   registerSchemas();
+  console.log('Schemas registered');
+
   await startDebugServer({
     buildDir: './build',
     path: './server-data',

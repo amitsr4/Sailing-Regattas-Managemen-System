@@ -1,7 +1,7 @@
-import { SchemaManager } from '@goatdb/goatdb';
+import { Schema, SchemaManager } from '@goatdb/goatdb';
 
 // UI Settings Schema
-export const kSchemeUISettings = {
+export const kSchemeUISettings: Schema = {
   ns: 'uiSettings',
   version: 1,
   fields: {
@@ -17,7 +17,7 @@ export const kSchemeUISettings = {
 } as const;
 
 // Sailor Profile Schema (extends built-in user data)
-export const kSchemeSailorProfile = {
+export const kSchemeSailorProfile: Schema = {
   ns: 'sailorProfile',
   version: 1,
   fields: {
@@ -68,7 +68,7 @@ export const kSchemeSailorProfile = {
 } as const;
 
 // Boat Schema
-export const kSchemeBoat = {
+export const kSchemeBoat: Schema = {
   ns: 'boat',
   version: 1,
   fields: {
@@ -115,7 +115,7 @@ export const kSchemeBoat = {
 } as const;
 
 // Event Schema
-export const kSchemeEvent = {
+export const kSchemeEvent: Schema = {
   ns: 'event',
   version: 1,
   fields: {
