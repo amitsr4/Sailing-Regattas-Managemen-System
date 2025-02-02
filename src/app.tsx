@@ -1,95 +1,52 @@
+// src/App.tsx
 // @deno-types="npm:@types/react"
 import React from 'react';
-import { useDBReady, useItem } from '@goatdb/goatdb/react';
-import { Login } from './components/auth/Login.tsx';
-import { Register } from './components/auth/Register.tsx';
-import { kSchemeUISettings } from '../schema.ts';
-
-function AuthScreen({ userId }: { userId: string }) {
-  const [activeTab, setActiveTab] = React.useState<'login' | 'register'>(
-    'login'
-  );
-
-  return (
-    <div className="w-full max-w-6xl mx-auto p-5">
-      <div className="mb-5">
-        <button
-          className={`px-5 py-2 mr-2 rounded ${
-            activeTab === 'login' ? 'bg-blue-500 text-white' : 'bg-gray-100'
-          }`}
-          onClick={() => setActiveTab('login')}>
-          Login
-        </button>
-        <button
-          className={`px-5 py-2 rounded ${
-            activeTab === 'register' ? 'bg-blue-500 text-white' : 'bg-gray-100'
-          }`}
-          onClick={() => setActiveTab('register')}>
-          Register
-        </button>
-      </div>
-      {activeTab === 'login' ? (
-        <Login userId={userId} />
-      ) : (
-        <Register userId={userId} />
-      )}
-    </div>
-  );
-}
+import { useDB, useDBReady, useItem } from '@goatdb/goatdb/react';
+import { kSchemeUISettings, kSchemeSailorProfile } from './schema';
+import { ProfileSetup } from './components/auth/ProfileSetup.tsx';
+import { LoginPrompt } from './components/auth/LoginPrompt.tsx';
 
 function MainApp({ userId }: { userId: string }) {
+  const db = useDB();
+  const profile = useItem(`/user/${userId}/profile`);
+
+  // Check if user has completed profile setup
+  if (profile.schema.ns === null) {
+    profile.schema = kSchemeSailorProfile;
+    return <ProfileSetup userId={userId} />;
+  }
+
   return (
-    <div className="p-5">
-      <h1 className="text-2xl font-bold">
-        Welcome to Sailing Regattas Management System!
-      </h1>
+    <div className="min-h-screen">
+      <nav className="bg-white shadow-md p-4">
+        {/* Navigation will go here */}
+      </nav>
+      <main className="container mx-auto p-4">
+        <h1 className="text-2xl font-bold">Welcome, {profile.get('name')}</h1>
+        {/* Main content will go here */}
+      </main>
     </div>
   );
 }
 
 export function App() {
   const ready = useDBReady();
-  const userId = 'defaultUser';
-  const uiSettings = useItem('user', userId, 'UISettings');
+  const db = useDB();
 
+  // Handle initial loading
   if (ready === 'loading') {
-    return <div className="p-5">Loading...</div>;
+    return <div className="p-4">Loading...</div>;
   }
 
   if (ready === 'error') {
-    return (
-      <div className="p-5 text-red-500">Error! Please reload the page.</div>
-    );
+    return <div className="p-4 text-red-500">Error loading application!</div>;
   }
 
-  if (uiSettings.schema.ns === null) {
-    uiSettings.schema = kSchemeUISettings;
-    return null;
-  }
+  // Check authentication status
+  // const session = db.getSession();
+  // if (!session || !session.owner) {
+  return <LoginPrompt />;
+  // }
 
-  const currentUserId = uiSettings.get('currentUserId');
-
-  const handleLogout = () => {
-    uiSettings.set('currentUserId', null);
-    uiSettings.set('userType', null);
-  };
-
-  return (
-    <div className="min-h-screen">
-      {currentUserId ? (
-        <>
-          <div className="p-4 border-b flex justify-end">
-            <button
-              onClick={handleLogout}
-              className="px-4 py-2 bg-gray-100 rounded hover:bg-gray-200">
-              Logout
-            </button>
-          </div>
-          <MainApp userId={userId} />
-        </>
-      ) : (
-        <AuthScreen userId={userId} />
-      )}
-    </div>
-  );
+  // return <MainApp userId={session.owner} />;
 }

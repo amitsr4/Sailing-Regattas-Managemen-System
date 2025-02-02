@@ -1,6 +1,6 @@
 {
   "imports": {
-    "@goatdb/goatdb": "jsr:@goatdb/goatdb@^0.0.64",
+    "@goatdb/goatdb": "jsr:@goatdb/goatdb@^0.0.79",
     "@std/path": "jsr:@std/path@^1.0.8",
     "react": "npm:react@19.0.0",
     "react-dom": "npm:react-dom@19.0.0",

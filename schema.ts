@@ -1,31 +1,13 @@
 import { SchemaManager } from '@goatdb/goatdb';
 
-export const kSchemeUser = {
-  ns: 'user',
-  version: 1,
-  fields: {
-    currentUserId: {
-      type: 'string',
-    },
-    userType: {
-      type: 'string',
-    },
-  },
-} as const;
-
+// UI Settings Schema
 export const kSchemeUISettings = {
   ns: 'uiSettings',
   version: 1,
   fields: {
-    currentUserId: {
-      type: 'string', // Stores the current logged-in user's ID
-    },
-    userType: {
-      type: 'string', // Stores the type of user (club/individual/seriesOrganizer)
-    },
     selectedView: {
-      type: 'string', // Can be used for navigation/view state
-      default: () => 'events', // Default view
+      type: 'string',
+      default: () => 'events',
     },
     lastAccess: {
       type: 'date',
@@ -34,97 +16,18 @@ export const kSchemeUISettings = {
   },
 } as const;
 
-export const kSchemeBaseUser = {
-  ns: 'baseUser',
+// Sailor Profile Schema (extends built-in user data)
+export const kSchemeSailorProfile = {
+  ns: 'sailorProfile',
   version: 1,
   fields: {
-    name: {
+    userId: {
+      // References the built-in user
       type: 'string',
       required: true,
     },
-    email: {
-      type: 'string',
-      required: true,
-    },
-    mobile: {
-      type: 'string',
-      required: true,
-    },
-    password: {
-      // Will be hashed before storage
-      type: 'string',
-      required: true,
-    },
-    location: {
-      type: 'string',
-      required: true,
-    },
-    createdAt: {
-      type: 'date',
-      default: () => new Date(),
-    },
-    updatedAt: {
-      type: 'date',
-      default: () => new Date(),
-    },
-    isActive: {
-      type: 'boolean',
-      default: () => true,
-    },
-  },
-} as const;
-
-// Club Schema
-export const kSchemeClub = {
-  ns: 'club',
-  version: 1,
-  fields: {
-    ...kSchemeBaseUser.fields,
-    club_id: {
-      type: 'string',
-      required: true,
-    },
-    role: {
-      type: 'string',
-      required: true,
-      // Values: 'admin', 'clubManager', 'raceOfficer', 'competitor'
-    },
-    events: {
-      type: 'set', // Set of event IDs organized by this club
-      default: () => new Set(),
-    },
-  },
-} as const;
-
-// Series Organizer Schema
-export const kSchemeSeriesOrganizer = {
-  ns: 'seriesOrganizer',
-  version: 1,
-  fields: {
-    ...kSchemeBaseUser.fields,
-    organization_id: {
-      type: 'string',
-      required: true,
-    },
-    role: {
-      type: 'string',
-      required: true,
-      // Values: 'admin', 'manager', 'raceOfficer', 'competitor'
-    },
-    series: {
-      type: 'set', // Set of series IDs managed by this organizer
-      default: () => new Set(),
-    },
-  },
-} as const;
-
-// Individual User Schema
-export const kSchemeIndividual = {
-  ns: 'individual',
-  version: 1,
-  fields: {
-    ...kSchemeBaseUser.fields,
-    user_id: {
+    type: {
+      // 'club', 'individual', or 'seriesOrganizer'
       type: 'string',
       required: true,
     },
@@ -133,13 +36,33 @@ export const kSchemeIndividual = {
       required: true,
       default: () => 'competitor',
     },
+    name: {
+      type: 'string',
+      required: true,
+    },
+    mobile: {
+      type: 'string',
+      required: true,
+    },
+    location: {
+      type: 'string',
+      required: true,
+    },
     participatingEvents: {
-      type: 'set', // Set of event IDs the user is participating in
+      type: 'set', // Set of event IDs
       default: () => new Set(),
     },
     ownedBoats: {
-      type: 'set', // Set of boat IDs owned by this user
+      type: 'set', // Set of boat IDs
       default: () => new Set(),
+    },
+    createdAt: {
+      type: 'date',
+      default: () => new Date(),
+    },
+    updatedAt: {
+      type: 'date',
+      default: () => new Date(),
     },
   },
 } as const;
@@ -177,7 +100,7 @@ export const kSchemeBoat = {
       default: () => new Map(),
     },
     participatingEvents: {
-      type: 'set', // Set of event IDs this boat is registered for
+      type: 'set', // Set of event IDs
       default: () => new Set(),
     },
     createdAt: {
@@ -187,35 +110,6 @@ export const kSchemeBoat = {
     updatedAt: {
       type: 'date',
       default: () => new Date(),
-    },
-  },
-} as const;
-
-// Session Schema (for auth management)
-export const kSchemeSession = {
-  ns: 'session',
-  version: 1,
-  fields: {
-    userId: {
-      type: 'string',
-      required: true,
-    },
-    userType: {
-      type: 'string',
-      required: true,
-      // Values: 'club', 'seriesOrganizer', 'individual'
-    },
-    token: {
-      type: 'string',
-      required: true,
-    },
-    lastAccess: {
-      type: 'date',
-      default: () => new Date(),
-    },
-    expiresAt: {
-      type: 'date',
-      required: true,
     },
   },
 } as const;
@@ -249,14 +143,13 @@ export const kSchemeEvent = {
       type: 'string',
       required: true,
       default: () => 'draft',
-      // Values: 'draft', 'published', 'in_progress', 'completed', 'cancelled'
     },
     entry_fee: {
       type: 'number',
       required: true,
     },
     participants: {
-      type: 'set', // Set of boat IDs registered for this event
+      type: 'set', // Set of boat IDs
       default: () => new Set(),
     },
     documents: {
@@ -266,31 +159,30 @@ export const kSchemeEvent = {
     series_id: {
       type: 'string', // Optional: if event is part of a series
     },
+    createdAt: {
+      type: 'date',
+      default: () => new Date(),
+    },
+    updatedAt: {
+      type: 'date',
+      default: () => new Date(),
+    },
   },
 } as const;
 
-// Type definitions for TypeScript support
-export type SchemeBaseUserType = typeof kSchemeBaseUser;
-export type SchemeClubType = typeof kSchemeClub;
-export type SchemeSeriesOrganizerType = typeof kSchemeSeriesOrganizer;
-export type SchemeIndividualType = typeof kSchemeIndividual;
-export type SchemeBoatType = typeof kSchemeBoat;
-export type SchemeSessionType = typeof kSchemeSession;
-export type SchemeEventType = typeof kSchemeEvent;
 export type SchemeUISettingsType = typeof kSchemeUISettings;
+export type SchemeSailorProfileType = typeof kSchemeSailorProfile;
+export type SchemeBoatType = typeof kSchemeBoat;
+export type SchemeEventType = typeof kSchemeEvent;
 
 export function registerSchemas(
-  manager: SchemaManager = SchemaManager.default // Add default parameter
+  manager: SchemaManager = SchemaManager.default
 ): void {
   const schemas = [
-    kSchemeBaseUser,
-    kSchemeClub,
-    kSchemeSeriesOrganizer,
-    kSchemeIndividual,
-    kSchemeBoat,
-    kSchemeSession,
-    kSchemeEvent,
     kSchemeUISettings,
+    kSchemeSailorProfile,
+    kSchemeBoat,
+    kSchemeEvent,
   ];
 
   if (!manager) {
