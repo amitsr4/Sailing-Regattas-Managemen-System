@@ -4,12 +4,10 @@ import { createRoot } from 'react-dom/client';
 import { App } from '../src/app.tsx';
 import { registerSchemas } from '../schema.ts';
 
-console.log('Initializing application...'); // Add logging to debug startup
+console.log('Initializing application...');
 
-// Register schemas first
 registerSchemas();
 
-// Initialize React
 const container = document.getElementById('root');
 if (!container) {
   console.error('Failed to find root element');
