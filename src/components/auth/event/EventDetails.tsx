@@ -1,4 +1,3 @@
-// src/components/event/EventDetails.tsx
 // @deno-types="npm:@types/react"
 import React, { useState } from 'react';
 import { useItem } from '@goatdb/goatdb/react';
@@ -9,6 +8,9 @@ import {
   ensureNumber,
   ensureString,
 } from '../../../utils/typeGuards.ts';
+import { RaceResults } from '../../race/RaceResults.tsx';
+import { RaceList } from '../../race/RaceList.tsx';
+import { ResultsManagement } from '../../race/ResultManagments.tsx';
 
 interface EventDetailsProps {
   eventId: string;
@@ -20,6 +22,7 @@ export function EventDetails({ eventId, userId, onBack }: EventDetailsProps) {
   const event = useItem(`/data/events/${eventId}`);
   const userBoats = useItem(`/data/users/${userId}/boats`);
   const [showRegistrationForm, setShowRegistrationForm] = useState(false);
+  const [selectedRaceId, setSelectedRaceId] = useState<string | null>(null);
 
   if (event.schema.ns === null) {
     event.schema = kSchemeEvent;
@@ -35,6 +38,16 @@ export function EventDetails({ eventId, userId, onBack }: EventDetailsProps) {
     participants.add(userId);
     event.set('participants', participants);
   };
+
+  if (selectedRaceId) {
+    return (
+      <RaceResults
+        raceId={selectedRaceId}
+        eventId={eventId}
+        onBack={() => setSelectedRaceId(null)}
+      />
+    );
+  }
 
   return (
     <div className="container mx-auto p-4">
@@ -115,6 +128,12 @@ export function EventDetails({ eventId, userId, onBack }: EventDetailsProps) {
             <p className="text-gray-500">No participants registered yet.</p>
           )}
         </div>
+      </div>
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <RaceList eventId={eventId} onSelectRace={setSelectedRaceId} />
+      </div>
+      <div className="bg-white rounded-lg shadow-md p-6 mt-6">
+        <ResultsManagement eventId={eventId} />
       </div>
     </div>
   );

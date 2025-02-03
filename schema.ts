@@ -170,6 +170,69 @@ export const kSchemeEvent: Schema = {
   },
 } as const;
 
+export const kSchemeRace = {
+  ns: 'race',
+  version: 1,
+  fields: {
+    eventId: {
+      type: 'string',
+      required: true,
+    },
+    name: {
+      type: 'string',
+      required: true,
+    },
+    date: {
+      type: 'date',
+      required: true,
+    },
+    status: {
+      type: 'string',
+      required: true,
+      default: () => 'scheduled', // scheduled, in_progress, completed
+    },
+    results: {
+      type: 'map', // Map of boatId to { finishTime: Date, position: number }
+      default: () => new Map(),
+    },
+    createdAt: {
+      type: 'date',
+      default: () => new Date(),
+    },
+    updatedAt: {
+      type: 'date',
+      default: () => new Date(),
+    },
+  },
+} as Schema;
+
+export const kSchemeRaceResult = {
+  ns: 'raceResult',
+  version: 1,
+  fields: {
+    eventId: {
+      type: 'string',
+      required: true,
+    },
+    boatId: {
+      type: 'string',
+      required: true,
+    },
+    finishTime: {
+      type: 'date',
+      required: true,
+    },
+    position: {
+      type: 'number',
+      required: true,
+    },
+    createdAt: {
+      type: 'date',
+      default: () => new Date(),
+    },
+  },
+} as Schema;
+
 export type SchemeUISettingsType = typeof kSchemeUISettings;
 export type SchemeSailorProfileType = typeof kSchemeSailorProfile;
 export type SchemeBoatType = typeof kSchemeBoat;

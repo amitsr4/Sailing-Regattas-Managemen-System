@@ -33,6 +33,13 @@ export function ensureNumber(value: unknown): number {
   return 0;
 }
 
+export function ensureMap<T>(value: unknown): Map<string, T> {
+  if (value instanceof Map) {
+    return value as Map<string, T>;
+  }
+  return new Map<string, T>();
+}
+
 export function ensureDate(value: unknown): Date {
   if (isDate(value)) return value;
   if (isString(value) || isNumber(value)) return new Date(value);
@@ -42,4 +49,9 @@ export function ensureDate(value: unknown): Date {
 export function ensureSet<T extends CoreValue>(value: unknown): Set<T> {
   if (isSet(value)) return value as Set<T>;
   return new Set<T>();
+}
+
+export interface RaceResult {
+  finishTime: Date;
+  position: number;
 }
