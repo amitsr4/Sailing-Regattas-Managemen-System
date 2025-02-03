@@ -1,16 +1,16 @@
 // @deno-types="npm:@types/react"
 import React, { useState } from 'react';
 import { useItem } from '@goatdb/goatdb/react';
-import { kSchemeEvent } from '../../../../schema.ts';
+import { kSchemeEvent } from '../../../schema.ts';
 import { EventRegistration } from './registration/EventRegistration.tsx';
 import {
   ensureDate,
   ensureNumber,
   ensureString,
-} from '../../../utils/typeGuards.ts';
-import { RaceResults } from '../../race/RaceResults.tsx';
-import { RaceList } from '../../race/RaceList.tsx';
-import { ResultsManagement } from '../../race/ResultManagments.tsx';
+} from '../../utils/typeGuards.ts';
+import { RaceResults } from '../race/RaceResults.tsx';
+import { RaceList } from '../race/RaceList.tsx';
+import { ResultsManagement } from '../race/ResultManagments.tsx';
 
 interface EventDetailsProps {
   eventId: string;

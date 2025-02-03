@@ -1,9 +1,8 @@
-// src/components/event/registration/EventRegistration.tsx
 // @deno-types="npm:@types/react"
 import React, { useState } from 'react';
 import { useItem, useQuery } from '@goatdb/goatdb/react';
-import { kSchemeBoat } from '../../../../../schema.ts';
-import { ManagedItem, Schema } from '@goatdb/goatdb';
+import { kSchemeBoat } from '../../../../schema.ts';
+import { ensureDate } from '../../../utils/typeGuards.ts';
 
 interface RegistrationFormProps {
   eventId: string;
@@ -106,7 +105,7 @@ export function EventRegistration({
             <h3 className="font-medium mb-2">Event Details:</h3>
             <p>Event: {String(event.get('name'))}</p>
             <p>
-              Date: {new Date(event.get('start_date')).toLocaleDateString()}
+              Date: {ensureDate(event.get('start_date')).toLocaleDateString()}
             </p>
             <p>Entry Fee: ${Number(event.get('entry_fee')).toFixed(2)}</p>
           </div>

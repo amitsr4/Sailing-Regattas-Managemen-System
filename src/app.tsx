@@ -14,6 +14,7 @@ export function Contents() {
 
 export function App() {
   const ready = useDBReady();
+  console.log('App rendering, ready state:', ready);
 
   if (ready === 'loading') {
     return <div>Loading...</div>;
@@ -21,6 +22,7 @@ export function App() {
   if (ready === 'error') {
     return <div>Error! Please reload the page.</div>;
   }
+  return <div>Hello World - App is running!</div>;
 
-  return <Contents />;
+  // return <Contents />;
 }

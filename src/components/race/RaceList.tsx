@@ -14,9 +14,14 @@ export function RaceList({ eventId, onSelectRace }: RaceListProps) {
     schema: kSchemeRace,
     source: '/data/races',
     predicate: ({ item }) => String(item.get('eventId')) === eventId,
-    sortDescriptor: ({ left, right }) =>
-      new Date(right.get('date')).getTime() -
-      new Date(left.get('date')).getTime(),
+    sortDescriptor: ({ left, right }) => {
+      const leftDate = left.get('date');
+      const rightDate = right.get('date');
+      if (leftDate instanceof Date && rightDate instanceof Date) {
+        return rightDate.getTime() - leftDate.getTime();
+      }
+      return 0;
+    },
   });
 
   return (

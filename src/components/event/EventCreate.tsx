@@ -1,7 +1,7 @@
 // @deno-types="npm:@types/react"
 import React, { JSX, useState } from 'react';
 import { useDB } from '@goatdb/goatdb/react';
-import { kSchemeEvent } from '../../../../schema.ts';
+import { kSchemeEvent } from '../../../schema.ts';
 
 interface EventCreateProps {
   userId: string;

@@ -1,6 +1,6 @@
 // @deno-types="npm:@types/react"
 import React, { JSX } from 'react';
-import { EventCardProps } from '../../../../types/index.tsx';
+import { EventCardProps } from '../../../types/index.tsx';
 
 type StatusColor = {
   bg: string;

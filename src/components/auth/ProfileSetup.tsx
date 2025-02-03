@@ -1,4 +1,3 @@
-// src/components/auth/ProfileSetup.tsx
 // @deno-types="npm:@types/react"
 import React, { JSX, useState } from 'react';
 import { useDB } from '@goatdb/goatdb/react';
