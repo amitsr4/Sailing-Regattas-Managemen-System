@@ -1,8 +1,14 @@
 // src/components/event/EventDetails.tsx
 // @deno-types="npm:@types/react"
-import React from 'react';
+import React, { useState } from 'react';
 import { useItem } from '@goatdb/goatdb/react';
 import { kSchemeEvent } from '../../../../schema.ts';
+import { EventRegistration } from './registration/EventRegistration.tsx';
+import {
+  ensureDate,
+  ensureNumber,
+  ensureString,
+} from '../../../utils/typeGuards.ts';
 
 interface EventDetailsProps {
   eventId: string;
@@ -13,6 +19,7 @@ interface EventDetailsProps {
 export function EventDetails({ eventId, userId, onBack }: EventDetailsProps) {
   const event = useItem(`/data/events/${eventId}`);
   const userBoats = useItem(`/data/users/${userId}/boats`);
+  const [showRegistrationForm, setShowRegistrationForm] = useState(false);
 
   if (event.schema.ns === null) {
     event.schema = kSchemeEvent;
@@ -51,16 +58,16 @@ export function EventDetails({ eventId, userId, onBack }: EventDetailsProps) {
         <h1 className="text-2xl font-bold mb-4">{String(event.get('name'))}</h1>
         <div className="space-y-2">
           <p>
-            <strong>Location:</strong> {String(event.get('location'))}
+            <strong>Location:</strong> {ensureString(event.get('location'))}
           </p>
           <p>
             <strong>Dates:</strong>{' '}
-            {new Date(event.get('start_date')).toLocaleDateString()} -{' '}
-            {new Date(event.get('end_date')).toLocaleDateString()}
+            {ensureDate(event.get('start_date')).toLocaleDateString()} -{' '}
+            {ensureDate(event.get('end_date')).toLocaleDateString()}
           </p>
           <p>
             <strong>Entry Fee:</strong> $
-            {Number(event.get('entry_fee')).toFixed(2)}
+            {ensureNumber(event.get('entry_fee')).toFixed(2)}
           </p>
         </div>
       </div>
@@ -70,7 +77,7 @@ export function EventDetails({ eventId, userId, onBack }: EventDetailsProps) {
         <h2 className="text-xl font-bold mb-4">Registration</h2>
         {!isRegistered ? (
           <button
-            onClick={handleRegister}
+            onClick={() => setShowRegistrationForm(true)}
             className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
             disabled={status !== 'published'}>
             Register for Event
@@ -81,6 +88,16 @@ export function EventDetails({ eventId, userId, onBack }: EventDetailsProps) {
           </div>
         )}
       </div>
+      {showRegistrationForm && (
+        <EventRegistration
+          eventId={eventId}
+          userId={userId}
+          onSuccess={() => {
+            setShowRegistrationForm(false);
+          }}
+          onCancel={() => setShowRegistrationForm(false)}
+        />
+      )}
 
       {/* Participants List */}
       <div className="bg-white rounded-lg shadow-md p-6">
