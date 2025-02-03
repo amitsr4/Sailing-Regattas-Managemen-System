@@ -8,8 +8,13 @@ type StatusColor = {
 };
 
 export function EventCard({ event, userId, onEventClick }: EventCardProps) {
-  const startDate = new Date(event.get('start_date'));
-  const endDate = new Date(event.get('end_date'));
+  const startDateValue = event.get('start_date');
+  const endDateValue = event.get('end_date');
+
+  const startDate =
+    startDateValue instanceof Date ? startDateValue : new Date();
+  const endDate = endDateValue instanceof Date ? endDateValue : new Date();
+
   const status = String(event.get('status'));
 
   const getStatusColor = (status: string) => {
@@ -34,29 +39,31 @@ export function EventCard({ event, userId, onEventClick }: EventCardProps) {
       className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer"
       onClick={() => onEventClick?.(event.path)}>
       <div className="p-6">
-        <h3 className="text-xl font-semibold">{String(event.get('name'))}</h3>
-        <p>{status}</p>
-      </div>
+        <div className="flex justify-between items-start mb-4">
+          <h3 className="text-xl font-semibold">{String(event.get('name'))}</h3>
+          <span
+            className={`px-2 py-1 rounded-full text-sm ${getStatusColor(
+              status
+            )}`}>
+            {status}
+          </span>
+        </div>
 
-      <div className="space-y-2 text-gray-600">
-        <p>{event.get('location')}</p>
-        <p>
-          {startDate.toLocaleDateString()} - {endDate.toLocaleDateString()}
-        </p>
-        <p className="font-medium">Entry Fee: ${event.get('entry_fee')}</p>
-      </div>
+        <div className="space-y-2 text-gray-600">
+          <p>{String(event.get('location'))}</p>
+          <p>
+            {startDate.toLocaleDateString()} - {endDate.toLocaleDateString()}
+          </p>
+          <p className="font-medium">
+            Entry Fee: ${Number(event.get('entry_fee')).toFixed(2)}
+          </p>
+        </div>
 
-      <div className="mt-4 flex justify-between items-center">
-        <span className="text-sm text-gray-500">
-          {event.get('participants').size} Participants
-        </span>
-        <button
-          onClick={() => {
-            /* Navigate to event details */
-          }}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-          View Details
-        </button>
+        <div className="mt-4 flex justify-between items-center">
+          <span className="text-sm text-gray-500">
+            Participants: {(event.get('participants') as Set<string>).size}
+          </span>
+        </div>
       </div>
     </div>
   );

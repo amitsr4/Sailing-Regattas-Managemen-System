@@ -10,20 +10,23 @@ export function EventList({ userId }: { userId: string }) {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const db = useDB();
 
-  // Get user profile to check permissions
   const userProfile = useItem(`/user/${userId}/profile`);
   const canCreateEvent =
     userProfile.schema.ns === kSchemeSailorProfile.ns &&
     (userProfile.get('type') === 'club' ||
       userProfile.get('type') === 'seriesOrganizer');
 
-  // Query for all events
   const eventsQuery = useQuery({
     schema: kSchemeEvent,
     source: '/data/events',
-    sortDescriptor: ({ left, right }) =>
-      new Date(right.get('start_date')).getTime() -
-      new Date(left.get('start_date')).getTime(),
+    sortDescriptor: ({ left, right }) => {
+      const leftDate = left.get('start_date');
+      const rightDate = right.get('start_date');
+      if (leftDate instanceof Date && rightDate instanceof Date) {
+        return rightDate.getTime() - leftDate.getTime();
+      }
+      return 0;
+    },
   });
 
   const handleEventClick = (eventId: string) => {
@@ -47,7 +50,7 @@ export function EventList({ userId }: { userId: string }) {
         {eventsQuery.results().map((event) => (
           <EventCard
             key={event.path}
-            event={event as Event} // Type assertion here
+            event={event}
             userId={userId}
             onEventClick={handleEventClick}
           />

@@ -1,21 +1,36 @@
 import { ManagedItem } from '@goatdb/goatdb';
-import { SchemeEventType, SchemeSailorProfileType } from '../../schema.ts';
+import {
+  kSchemeEvent,
+  kSchemeSailorProfile,
+  SchemeEventType,
+} from '../../schema.ts';
 
 export type Event = ManagedItem<SchemeEventType>;
-export type SailorProfile = ManagedItem<SchemeSailorProfileType>;
-
+// Event related types
 export interface EventCardProps {
-  event: Event;
+  event: ManagedItem<typeof kSchemeEvent>;
   userId: string;
   onEventClick?: (eventId: string) => void;
 }
 
-export interface EventListProps {
+export interface EventCreateProps {
   userId: string;
+  onClose: () => void;
+  onSuccess: () => void;
 }
 
-export interface EventCardProps {
-  event: Event;
+// Profile related types
+export interface ProfileSetupProps {
   userId: string;
-  onEventClick?: (eventId: string) => void;
+  onComplete?: () => void;
 }
+
+export interface ProfileFormData {
+  type: 'individual' | 'club' | 'seriesOrganizer';
+  role: string;
+  name: string;
+  mobile: string;
+  location: string;
+}
+
+export type SailorProfile = ManagedItem<typeof kSchemeSailorProfile>;
