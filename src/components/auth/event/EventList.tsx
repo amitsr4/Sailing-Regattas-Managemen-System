@@ -1,13 +1,14 @@
-// src/components/event/EventList.tsx
 // @deno-types="npm:@types/react"
 import React, { useState } from 'react';
 import { useDB, useQuery, useItem } from '@goatdb/goatdb/react';
 import { kSchemeEvent, kSchemeSailorProfile } from '../../../../schema.ts';
 import { EventCard } from './shared/EventCard.tsx';
 import { EventCreate } from './EventCreate.tsx';
+import { EventDetails } from './EventDetails.tsx';
 
 export function EventList({ userId }: { userId: string }) {
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const db = useDB();
 
   const userProfile = useItem(`/user/${userId}/profile`);
@@ -32,6 +33,16 @@ export function EventList({ userId }: { userId: string }) {
   const handleEventClick = (eventId: string) => {
     // Handle event click
   };
+
+  if (selectedEventId) {
+    return (
+      <EventDetails
+        eventId={selectedEventId}
+        userId={userId}
+        onBack={() => setSelectedEventId(null)}
+      />
+    );
+  }
 
   return (
     <div className="container mx-auto p-4">
