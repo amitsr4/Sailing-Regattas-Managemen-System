@@ -9,7 +9,6 @@ interface MainContentProps {
   userId: string;
 }
 function MainContent({ userId }: MainContentProps) {
-  // Use proper path for user data
   const profile = useItem(`/sys/users/${userId}`);
   const uiSettings = useItem(`/user/${userId}/UISettings`); // User settings go in /user
 

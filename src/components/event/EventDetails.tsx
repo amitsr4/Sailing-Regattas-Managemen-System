@@ -20,6 +20,7 @@ interface EventDetailsProps {
 
 export function EventDetails({ eventId, userId, onBack }: EventDetailsProps) {
   const event = useItem(`/data/events/${eventId}`);
+  const userProfile = useItem(`/sys/users/${userId}`);
   const userBoats = useItem(`/data/users/${userId}/boats`);
   const [showRegistrationForm, setShowRegistrationForm] = useState(false);
   const [selectedRaceId, setSelectedRaceId] = useState<string | null>(null);
@@ -130,9 +131,11 @@ export function EventDetails({ eventId, userId, onBack }: EventDetailsProps) {
         </div>
       </div>
       <div className="bg-white rounded-lg shadow-md p-6">
+        Race List:
         <RaceList eventId={eventId} onSelectRace={setSelectedRaceId} />
       </div>
       <div className="bg-white rounded-lg shadow-md p-6 mt-6">
+        Result Management:
         <ResultsManagement eventId={eventId} />
       </div>
     </div>

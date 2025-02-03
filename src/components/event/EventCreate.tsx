@@ -25,13 +25,13 @@ export function EventCreate({
 }: EventCreateProps): JSX.Element {
   const db = useDB();
   const [error, setError] = useState<string | null>(null);
-  const [formData, setFormData] = useState<EventFormData>({
+  const [formData, setFormData] = useState({
     name: '',
     location: '',
     start_date: '',
     end_date: '',
     entry_fee: '',
-    status: 'draft',
+    status: '',
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -39,7 +39,6 @@ export function EventCreate({
     setError(null);
 
     try {
-      // Validate dates
       const startDate = new Date(formData.start_date);
       const endDate = new Date(formData.end_date);
 
@@ -48,18 +47,25 @@ export function EventCreate({
         return;
       }
 
-      // Create event
+      // Create event with all required fields
       const eventId = crypto.randomUUID();
-      await db.create(`/data/events/${eventId}`, kSchemeEvent, {
-        ...formData,
-        organizer_id: userId,
-        entry_fee: parseFloat(formData.entry_fee),
+      await db.load(`/data/events/${eventId}`, kSchemeEvent, {
+        name: formData.name,
+        location: formData.location,
         start_date: startDate,
         end_date: endDate,
+        organizer_id: userId,
+        entry_fee: parseFloat(formData.entry_fee),
+        status: 'draft',
+        participants: new Set<string>(), // Initialize empty sets
+        documents: new Map(), // Initialize empty map
+        createdAt: new Date(),
+        updatedAt: new Date(),
       });
 
       onSuccess();
     } catch (err) {
+      console.error('Event creation error:', err); // Log full error
       setError(err instanceof Error ? err.message : 'Failed to create event');
     }
   };

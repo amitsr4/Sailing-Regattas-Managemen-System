@@ -11,7 +11,7 @@ export function EventList({ userId }: { userId: string }) {
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const db = useDB();
 
-  const userProfile = useItem(`/user/${userId}/profile`);
+  const userProfile = useItem(`/sys/users/${userId}`);
   const canCreateEvent =
     userProfile.schema.ns === kSchemeSailorProfile.ns &&
     (userProfile.get('type') === 'club' ||
@@ -31,7 +31,7 @@ export function EventList({ userId }: { userId: string }) {
   });
 
   const handleEventClick = (eventId: string) => {
-    // Handle event click
+    setSelectedEventId(eventId);
   };
 
   if (selectedEventId) {

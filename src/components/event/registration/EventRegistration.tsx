@@ -25,6 +25,7 @@ export function EventRegistration({
     source: '/data/boats',
     predicate: ({ item }) => String(item.get('owner_id')) === userId,
   });
+  const userProfile = useItem(`/sys/users/${userId}`);
 
   // Get event for registration
   const event = useItem(`/data/events/${eventId}`);

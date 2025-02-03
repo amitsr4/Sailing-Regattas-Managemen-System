@@ -13,8 +13,8 @@ export function LoginPrompt() {
       await db.load(`/sys/users/${devUserId}`, kSchemeSailorProfile, {
         userId: devUserId,
         name: 'Test User',
-        type: 'individual',
-        role: 'competitor',
+        type: 'seriesOrganizer',
+        role: 'admin',
         mobile: '0527501111',
         location: 'Tel Aviv',
         participatingEvents: new Set<string>(),
