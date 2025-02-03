@@ -22,12 +22,14 @@ export const kSchemeSailorProfile: Schema = {
   version: 1,
   fields: {
     userId: {
-      // References the built-in user
+      type: 'string',
+      required: true,
+    },
+    name: {
       type: 'string',
       required: true,
     },
     type: {
-      // 'club', 'individual', or 'seriesOrganizer'
       type: 'string',
       required: true,
     },
@@ -35,10 +37,6 @@ export const kSchemeSailorProfile: Schema = {
       type: 'string',
       required: true,
       default: () => 'competitor',
-    },
-    name: {
-      type: 'string',
-      required: true,
     },
     mobile: {
       type: 'string',
@@ -49,12 +47,12 @@ export const kSchemeSailorProfile: Schema = {
       required: true,
     },
     participatingEvents: {
-      type: 'set', // Set of event IDs
-      default: () => new Set(),
+      type: 'set',
+      default: () => new Set<string>(), // Specify string type
     },
     ownedBoats: {
-      type: 'set', // Set of boat IDs
-      default: () => new Set(),
+      type: 'set',
+      default: () => new Set<string>(), // Specify string type
     },
     createdAt: {
       type: 'date',

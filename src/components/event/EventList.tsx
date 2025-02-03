@@ -1,7 +1,7 @@
 // @deno-types="npm:@types/react"
 import React, { useState } from 'react';
 import { useDB, useQuery, useItem } from '@goatdb/goatdb/react';
-import { kSchemeEvent, kSchemeSailorProfile } from '../../../../schema.ts';
+import { kSchemeEvent, kSchemeSailorProfile } from '../../../schema.ts';
 import { EventCard } from './shared/EventCard.tsx';
 import { EventCreate } from './EventCreate.tsx';
 import { EventDetails } from './EventDetails.tsx';
