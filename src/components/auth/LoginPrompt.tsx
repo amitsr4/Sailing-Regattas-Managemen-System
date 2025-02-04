@@ -1,17 +1,23 @@
 // @deno-types="npm:@types/react"
 import React, { useState } from 'react';
 import { useDB } from '@goatdb/goatdb/react';
+import { Mail, Lock, Ship } from 'lucide-react';
 import { kSchemeSailorProfile } from '../../../schema.ts';
 
-export function LoginPrompt() {
+interface LoginPromptProps {
+  onSignupClick: () => void;
+}
+
+export function LoginPrompt({ onSignupClick }: LoginPromptProps) {
+  const [isLoading, setIsLoading] = useState(false);
   const db = useDB();
 
   const handleDevLogin = async () => {
+    setIsLoading(true);
     try {
       const devUserId = crypto.randomUUID();
-
       await db.load(`/sys/users/${devUserId}`, kSchemeSailorProfile, {
-        userId: devUserId,
+        id: devUserId,
         name: 'Test User',
         type: 'seriesOrganizer',
         role: 'admin',
@@ -27,73 +33,38 @@ export function LoginPrompt() {
       window.location.reload();
     } catch (error) {
       console.error('Login error:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="bg-white p-8 rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6">Sailing Regattas Management</h2>
+    <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-sm">
+      <div className="text-center mb-8">
+        <Ship className="mx-auto h-12 w-12 text-blue-600" />
+        <h2 className="text-3xl font-bold text-gray-900 mt-6">Welcome Back</h2>
+        <p className="mt-2 text-gray-600">Sign in to your account</p>
+      </div>
+
       <button
         onClick={handleDevLogin}
-        className="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600">
-        Login as Test User
+        disabled={isLoading}
+        className="w-full py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50">
+        {isLoading ? (
+          <div className="w-5 h-5 border-t-2 border-white rounded-full animate-spin mx-auto" />
+        ) : (
+          'Login as Test User'
+        )}
       </button>
+
+      <p className="mt-4 text-center text-sm text-gray-600">
+        Don't have an account?{' '}
+        <button
+          onClick={onSignupClick}
+          className="text-blue-600 hover:text-blue-500">
+          Sign up
+        </button>
+      </p>
     </div>
   );
 }
-
-// export function LoginPrompt() {
-//   const [email, setEmail] = useState('');
-//   const [status, setStatus] = useState<'idle' | 'sending' | 'sent'>('idle');
-//   const db = useDB();
-
-//   const handleSubmit = async (e: React.FormEvent) => {
-//     e.preventDefault();
-//     setStatus('sending');
-
-//     try {
-//       const success = await db.loginWithMagicLinkEmail(email);
-//       if (success) {
-//         setStatus('sent');
-//       } else {
-//         setStatus('idle');
-//         alert('Failed to send login email. Please try again.');
-//       }
-//     } catch (error) {
-//       setStatus('idle');
-//       console.error('Login error:', error);
-//       alert('An error occurred. Please try again.');
-//     }
-//   };
-
-//   if (status === 'sent') {
-//     return (
-//       <div className="p-6 max-w-sm mx-auto bg-white rounded-xl shadow-md">
-//         <h2 className="text-xl font-bold mb-4">Check Your Email</h2>
-//         <p>We've sent a magic link to {email}. Click the link to sign in.</p>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div className="p-6 max-w-sm mx-auto bg-white rounded-xl shadow-md">
-//       <h2 className="text-xl font-bold mb-4">Sign In</h2>
-//       <form onSubmit={handleSubmit}>
-//         <input
-//           type="email"
-//           value={email}
-//           onChange={(e) => setEmail(e.target.value)}
-//           placeholder="Enter your email"
-//           className="w-full p-2 border rounded mb-4"
-//           required
-//         />
-//         <button
-//           type="submit"
-//           disabled={status === 'sending'}
-//           className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 disabled:opacity-50">
-//           {status === 'sending' ? 'Sending...' : 'Send Magic Link'}
-//         </button>
-//       </form>
-//     </div>
-//   );
-// }

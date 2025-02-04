@@ -1,13 +1,45 @@
 // @deno-types="npm:@types/react"
-import React, { JSX, useState } from 'react';
-import { useDB } from '@goatdb/goatdb/react';
-import { kSchemeSailorProfile } from '../../../schema.ts';
-import { ProfileFormData, ProfileSetupProps } from '../../types/index.tsx';
+import React, { useState } from 'react';
+import { Ship, ArrowLeft } from 'lucide-react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '../ui/card.tsx';
+import { Alert, AlertDescription } from '../ui/alert.tsx';
+import { Label } from '../ui/label.tsx';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../ui/select.tsx';
+import { Input } from '../ui/input.tsx';
+import { Button } from '../ui/button.tsx';
+
+interface ProfileSetupProps {
+  onSubmit: (formData: ProfileFormData) => Promise<string>;
+  onComplete: () => void;
+  onBack: () => void;
+}
+
+interface ProfileFormData {
+  type: 'individual' | 'club' | 'seriesOrganizer';
+  role: 'competitor' | 'admin';
+  name: string;
+  mobile: string;
+  location: string;
+}
 
 export function ProfileSetup({
-  userId,
+  onSubmit,
   onComplete,
-}: ProfileSetupProps): JSX.Element {
+  onBack,
+}: ProfileSetupProps) {
   const [formData, setFormData] = useState<ProfileFormData>({
     type: 'individual',
     role: 'competitor',
@@ -16,111 +48,131 @@ export function ProfileSetup({
     location: '',
   });
   const [error, setError] = useState<string | null>(null);
-  const db = useDB();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    setError(null);
 
     try {
-      const profile = db.create(
-        `/user/${userId}/profile`,
-        kSchemeSailorProfile,
-        {
-          ...formData,
-          userId,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        }
-      );
-
-      onComplete?.();
+      await onSubmit(formData);
+      onComplete();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create profile');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="max-w-lg mx-auto p-6">
-      <h2 className="text-2xl font-bold mb-6">Complete Your Profile</h2>
+    <Card className="w-full max-w-md mx-auto">
+      <CardHeader>
+        <div className="flex flex-col items-center">
+          <Ship className="h-12 w-12 text-blue-600 mb-4" />
+          <CardTitle className="text-2xl font-bold">
+            Create Your Profile
+          </CardTitle>
+          <CardDescription>
+            Tell us about yourself to get started
+          </CardDescription>
+        </div>
+      </CardHeader>
+
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          {error}
+        <div className="px-6">
+          <Alert variant="destructive">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
         </div>
       )}
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium mb-1">Account Type</label>
-          <select
-            value={formData.type}
-            onChange={(e) =>
-              setFormData((prev) => ({
-                ...prev,
-                type: e.target.value as ProfileFormData['type'],
-              }))
-            }
-            className="w-full p-2 border rounded"
-            required>
-            <option value="">Select account type</option>
-            <option value="individual">Individual</option>
-            <option value="club">Club</option>
-            <option value="seriesOrganizer">Series Organizer</option>
-          </select>
-        </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">Name</label>
-          <input
-            type="text"
-            value={formData.name}
-            onChange={(e) =>
-              setFormData((prev) => ({
-                ...prev,
-                name: e.target.value,
-              }))
-            }
-            className="w-full p-2 border rounded"
-            required
-          />
-        </div>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="accountType">Account Type</Label>
+              <Select
+                value={formData.type}
+                onValueChange={(value: ProfileFormData['type']) =>
+                  setFormData((prev) => ({ ...prev, type: value }))
+                }>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select account type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="individual">Individual</SelectItem>
+                  <SelectItem value="club">Club</SelectItem>
+                  <SelectItem value="seriesOrganizer">
+                    Series Organizer
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">Mobile</label>
-          <input
-            type="tel"
-            value={formData.mobile}
-            onChange={(e) =>
-              setFormData((prev) => ({
-                ...prev,
-                mobile: e.target.value,
-              }))
-            }
-            className="w-full p-2 border rounded"
-            required
-          />
-        </div>
+            <div>
+              <Label htmlFor="name">Name</Label>
+              <Input
+                id="name"
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, name: e.target.value }))
+                }
+                placeholder="Enter your full name"
+                required
+              />
+            </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">Location</label>
-          <input
-            type="text"
-            value={formData.location}
-            onChange={(e) =>
-              setFormData((prev) => ({
-                ...prev,
-                location: e.target.value,
-              }))
-            }
-            className="w-full p-2 border rounded"
-            required
-          />
-        </div>
+            <div>
+              <Label htmlFor="mobile">Mobile</Label>
+              <Input
+                id="mobile"
+                type="tel"
+                value={formData.mobile}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, mobile: e.target.value }))
+                }
+                placeholder="Enter your mobile number"
+                required
+              />
+            </div>
 
-        <button
-          type="submit"
-          className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
-          Complete Setup
-        </button>
-      </form>
-    </div>
+            <div>
+              <Label htmlFor="location">Location</Label>
+              <Input
+                id="location"
+                value={formData.location}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, location: e.target.value }))
+                }
+                placeholder="Enter your location"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="flex space-x-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onBack}
+              className="flex items-center">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back
+            </Button>
+            <Button type="submit" className="flex-1" disabled={isSubmitting}>
+              {isSubmitting ? 'Creating Profile...' : 'Complete Setup'}
+            </Button>
+          </div>
+        </form>
+      </CardContent>
+
+      <CardFooter className="justify-center">
+        <p className="text-sm text-muted-foreground">
+          By creating an account, you agree to our Terms of Service and Privacy
+          Policy
+        </p>
+      </CardFooter>
+    </Card>
   );
 }

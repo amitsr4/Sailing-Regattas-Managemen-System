@@ -34,7 +34,6 @@ export function EventDetails({ eventId, userId, onBack }: EventDetailsProps) {
   const status = String(event.get('status'));
 
   const handleRegister = async () => {
-    // TODO: Implement registration logic
     const participants = event.get('participants') as Set<string>;
     participants.add(userId);
     event.set('participants', participants);
@@ -91,9 +90,9 @@ export function EventDetails({ eventId, userId, onBack }: EventDetailsProps) {
         <h2 className="text-xl font-bold mb-4">Registration</h2>
         {!isRegistered ? (
           <button
-            onClick={() => setShowRegistrationForm(true)}
+            onClick={() => handleRegister()}
             className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-            disabled={status !== 'published'}>
+            disabled={status == 'published'}>
             Register for Event
           </button>
         ) : (

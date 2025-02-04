@@ -1,17 +1,35 @@
 {
   "imports": {
-    "@goatdb/goatdb": "jsr:@goatdb/goatdb@^0.0.79",
+    "@goatdb/goatdb": "jsr:@goatdb/goatdb@^0.0.84",
     "@std/path": "jsr:@std/path@^1.0.8",
     "react": "npm:react@19.0.0",
+    "@types/react": "npm:@types/react@19.0.8",
     "react-dom": "npm:react-dom@19.0.0",
-    "yargs": "npm:yargs@17.7.2"
+    "yargs": "npm:yargs@17.7.2",
+    "clsx": "npm:clsx@2.0.0",
+    "tailwind-merge": "npm:tailwind-merge@2.0.0",
+    "tailwindcss": "npm:tailwindcss@3.3.0",
+    "class-variance-authority": "npm:class-variance-authority@0.7.0",
+    "@radix-ui/react-slot": "npm:@radix-ui/react-slot@1.0.2",
+    "lucide-react": "npm:lucide-react@0.263.1",
+    "@radix-ui/react-select": "npm:@radix-ui/react-select@1.2.2",
+    "@radix-ui/react-label": "npm:@radix-ui/react-label@2.0.2",
+    "@/lib/utils": "./src/lib/utils.ts",
+    "@/components/*": "./src/components/*"
   },
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "dom.asynciterable", "deno.ns"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "dom.asynciterable",
+      "deno.ns"
+    ],
     "jsx": "precompile"
   },
   "tasks": {
     "debug": "deno run -A debug-server.ts",
+    "build": "deno run -A build.ts",
     "clean": "rm -r server-data"
-  }
+  },
+  "version": "0.0.1"
 }
