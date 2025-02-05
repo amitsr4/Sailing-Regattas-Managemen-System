@@ -1,36 +1,42 @@
 // @deno-types="npm:@types/react"
-import React, { useEffect } from 'react';
-import { useDB, useItem } from '@goatdb/goatdb/react';
-import { Ship, LogOut } from 'lucide-react';
-import { EventList } from './event/EventList.tsx';
-import { kSchemeSailorProfile, kSchemeUISettings } from '../../schema.ts';
+import React, { useEffect } from "react";
+import { useDB, useItem } from "@goatdb/goatdb/react";
+import { LogOut, Ship } from "lucide-react";
+import { EventList } from "./event/EventList.tsx";
+import {
+  kSchemeSailorProfile,
+  kSchemeUISettings,
+  SchemeSailorProfileType,
+  SchemeUISettingsType,
+} from "../../schema.ts";
 
-interface MainContentProps {
-  userId: string;
-}
-
-export function MainContent({ userId }: MainContentProps) {
-  const userProfile = useItem(`/sys/users/${userId}`);
-  const userSettings = useItem(`/user/${userId}/settings`);
+export function MainContent() {
   const db = useDB();
+  const userId = db.currentUser?.key;
+  const profile = useItem<SchemeSailorProfileType>(
+    userId && `/user/${userId}/profile`,
+  );
+  const userSettings = useItem<SchemeUISettingsType>(
+    userId && `/user/${userId}/settings`,
+  );
 
   useEffect(() => {
     // Initialize schemas if needed
-    if (userProfile.schema.ns === null) {
-      userProfile.schema = kSchemeSailorProfile;
+    if (profile && profile.schema.ns === null) {
+      profile.schema = kSchemeSailorProfile;
     }
-    if (userSettings.schema.ns === null) {
+    if (userSettings && userSettings.schema.ns === null) {
       userSettings.schema = kSchemeUISettings;
     }
-  }, [userProfile, userSettings]);
+  }, [profile, userSettings]);
 
   const handleLogout = () => {
-    localStorage.removeItem('devUserId');
+    localStorage.removeItem("devUserId");
     window.location.reload();
   };
 
   // Wait for profile schema to be assigned
-  if (userProfile.schema.ns === null) {
+  if (profile && profile.schema.ns === null) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-pulse flex items-center space-x-2">
@@ -57,17 +63,18 @@ export function MainContent({ userId }: MainContentProps) {
               <div className="flex items-center space-x-3">
                 <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
                   <span className="text-blue-600 font-medium">
-                    {userProfile.get('name')?.charAt(0) || '?'}
+                    {(profile && profile.get("name")?.charAt(0)) || "?"}
                   </span>
                 </div>
                 <span className="text-gray-700 font-medium">
-                  {userProfile.get('name') || 'Loading...'}
+                  {(profile && profile.get("name")) || "Loading..."}
                 </span>
               </div>
 
               <button
                 onClick={handleLogout}
-                className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors">
+                className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
+              >
                 <LogOut className="w-5 h-5" />
                 <span>Logout</span>
               </button>

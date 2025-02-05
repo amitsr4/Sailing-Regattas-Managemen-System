@@ -1,17 +1,16 @@
 // @deno-types="@types/react"
-import React, { useState } from 'react';
-import { Ship, Anchor } from 'lucide-react';
-import { LoginPrompt } from './auth/LoginPrompt.tsx';
-import { ProfileSetup } from './auth/ProfileSetup.tsx';
-import { useDB } from '@goatdb/goatdb/react';
-import { kSchemeSailorProfile, kSchemeUISettings } from '../../schema.ts';
-import { SchemaDataType } from 'https://jsr.io/@goatdb/goatdb/0.0.79/cfds/base/schema.ts';
-import { Schema } from 'https://jsr.io/@goatdb/goatdb/0.0.79/mod.ts';
+import React, { useState } from "react";
+import { Anchor, Ship } from "lucide-react";
+import { LoginPrompt } from "./auth/LoginPrompt.tsx";
+import { ProfileSetup } from "./auth/ProfileSetup.tsx";
+import { useDB } from "@goatdb/goatdb/react";
+import { kSchemeSailorProfile, kSchemeUISettings } from "../../schema.ts";
+import { Schema, SchemaDataType } from "@goatdb/goatdb";
 
-type AuthView = 'landing' | 'login' | 'signup';
+type AuthView = "landing" | "login" | "signup";
 
 export function LandingPage() {
-  const [view, setView] = useState<AuthView>('landing');
+  const [view, setView] = useState<AuthView>("landing");
   const db = useDB();
 
   // Function to handle user creation and profile setup
@@ -29,27 +28,27 @@ export function LandingPage() {
       // Create user settings in /user/{userId}/settings
       await db.load(`/user/${userId}/settings`, kSchemeUISettings, {
         userId,
-        theme: 'light',
+        theme: "light",
         notifications: true,
       });
 
       return userId;
     } catch (error) {
-      console.error('Failed to create user:', error);
+      console.error("Failed to create user:", error);
       throw error;
     }
   };
 
   const renderAuthContent = () => {
     switch (view) {
-      case 'login':
-        return <LoginPrompt onSignupClick={() => setView('signup')} />;
-      case 'signup':
+      case "login":
+        return <LoginPrompt onSignupClick={() => setView("signup")} />;
+      case "signup":
         return (
           <ProfileSetup
             onSubmit={handleUserCreation}
-            onComplete={() => setView('login')}
-            onBack={() => setView('landing')}
+            onComplete={() => setView("login")}
+            onBack={() => setView("landing")}
           />
         );
       default:
@@ -67,14 +66,16 @@ export function LandingPage() {
             </div>
             <div className="space-y-4">
               <button
-                onClick={() => setView('login')}
-                className="w-64 py-3 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                onClick={() => setView("login")}
+                className="w-64 py-3 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
                 Login
               </button>
               <div>
                 <button
-                  onClick={() => setView('signup')}
-                  className="w-64 py-3 px-4 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                  onClick={() => setView("signup")}
+                  className="w-64 py-3 px-4 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                >
                   Sign Up
                 </button>
               </div>

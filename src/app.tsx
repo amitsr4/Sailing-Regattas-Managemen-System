@@ -1,17 +1,15 @@
 // @deno-types="npm:@types/react"
-import React from 'react';
-import { useDBReady, useItem } from '@goatdb/goatdb/react';
-import { MainContent } from './components/MainContent.tsx';
-import { LandingPage } from './components/LandingPage.tsx';
+import React from "react";
+import { useDB, useDBReady, useItem } from "@goatdb/goatdb/react";
+import { MainContent } from "./components/MainContent.tsx";
+import { LandingPage } from "./components/LandingPage.tsx";
 
 export function App() {
   const ready = useDBReady();
-  const currentSession = useItem('/sys/sessions/current');
+  const db = useDB();
+  const currentUser = db.currentUser;
 
-  // For development login
-  const devUserId = localStorage.getItem('devUserId');
-
-  if (ready === 'loading') {
+  if (ready === "loading") {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-pulse flex items-center space-x-2">
@@ -21,7 +19,7 @@ export function App() {
     );
   }
 
-  if (ready === 'error') {
+  if (ready === "error") {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-xl text-red-600">
@@ -32,9 +30,8 @@ export function App() {
   }
 
   // If user is authenticated (either through dev login or regular auth)
-  const userId = devUserId || currentSession?.get('userId');
-  if (userId) {
-    return <MainContent userId={userId} />;
+  if (currentUser) {
+    return <MainContent />;
   }
 
   // Show landing page with auth options if not authenticated

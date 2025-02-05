@@ -1,26 +1,28 @@
-import { startDebugServer } from '@goatdb/goatdb/server';
-import { registerSchemas } from './schema.ts';
+import { startDebugServer } from "@goatdb/goatdb/server";
+import { registerSchemas } from "./schema.ts";
+import { fixReact18Dependency } from "./build.ts";
 
 async function main(): Promise<void> {
-  console.log('Starting debug server...');
+  console.log("Starting debug server...");
+  await fixReact18Dependency();
 
   try {
     registerSchemas();
-    console.log('Schemas registered');
+    console.log("Schemas registered");
 
     await startDebugServer({
-      buildDir: './build',
-      path: './server-data',
-      jsPath: './scaffold/index.tsx',
-      htmlPath: './scaffold/index.html',
-      cssPath: './scaffold/index.css',
-      assetsPath: './assets',
-      watchDir: './',
+      buildDir: "./build",
+      path: "./server-data",
+      jsPath: "./scaffold/index.tsx",
+      htmlPath: "./scaffold/index.html",
+      cssPath: "./scaffold/index.css",
+      assetsPath: "./assets",
+      watchDir: "./",
     });
 
-    console.log('Debug server started successfully');
+    console.log("Debug server started successfully");
   } catch (error) {
-    console.error('Error starting server:', error);
+    console.error("Error starting server:", error);
   }
 }
 
